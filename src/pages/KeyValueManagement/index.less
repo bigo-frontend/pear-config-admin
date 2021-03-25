@@ -1,0 +1,49 @@
+@import '~antd/lib/style/themes/default.less';
+
+.keyValueManagement {
+  :global(.ant-table-body) {
+    overflow-y: auto!important;
+  }
+  table {
+    :global(.ant-table-tbody > tr > td) {
+      padding: 8px;
+    }
+    button+button {
+      margin-left: 10px;
+    }
+    :global(.btn-box) {
+      margin: 6px 6px 0 0;
+    }
+  }
+  .icon {
+    font-size: 24px;
+    color: rgba(0, 0, 0, 0.2);
+    margin-left: 16px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: @primary-color;
+    }
+  }
+}
+.envModal {
+  width: 800px!important;
+  :global(.antd-pro-components-extended-form-field-json-index-jsoneditorWrap) {
+    height: 380px!important;
+  }
+}
+.keyValueModal {
+  width: 800px!important;
+  :global(.reedit-form) {
+    display: block;
+    margin: 0 0 20px auto;
+  }
+  :global(.ant-modal-body) {
+    padding: 20px 80px;
+  }
+  :global(.antd-pro-components-extended-form-field-json-index-jsoneditorWrap) {
+    height: 380px!important;
+  }
+}
