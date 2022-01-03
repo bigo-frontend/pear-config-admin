@@ -1,6 +1,7 @@
 import React from 'react';
 import { notification, Button, message } from 'antd';
 import { formatMessage } from 'umi/locale';
+import '@/components/extendedFormField/RichText';
 
 // Notify user if offline now
 window.addEventListener('sw.offline', () => {

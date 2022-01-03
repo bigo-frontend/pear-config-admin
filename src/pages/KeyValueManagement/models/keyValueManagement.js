@@ -19,6 +19,8 @@ import {
   getKeyValueConfig,
   getKeyValueDraft,
   rollbackKeyValue,
+  getKeyValuePublishRecords,
+  publishRecordRollback
 } from '@/services/api';
 import config from '../../../../config/admin.config.js';
 
@@ -37,6 +39,11 @@ export default {
       total: 0
     },
     draftPagination: {
+      pageSize: 5,
+      pageIndex: 1,
+      total: 0
+    },
+    publishRecordsPagination: {
       pageSize: 5,
       pageIndex: 1,
       total: 0
@@ -191,8 +198,30 @@ export default {
         });
       }
     },
+    *getKeyValuePublishRecords({ payload }, { call, put, select }) {
+      const { publishRecordsPagination } = yield select(state => state.keyValueManagement);
+      const res = yield call(getKeyValuePublishRecords, { ...payload, pageSize: publishRecordsPagination.pageSize, pageIndex: publishRecordsPagination.pageIndex });
+      if (res.status) {
+        yield put({
+          type: 'updateData',
+          payload: {
+            publishRecords: res.data,
+            publishRecordsPagination: {
+              ...publishRecordsPagination,
+              total: res.total
+            }
+          },
+        });
+      }
+    },
     *rollbackKeyValue({ payload }, { call, put }) {
       const res = yield call(rollbackKeyValue, payload);
+      if (res.status) {
+        yield put({ type: 'getKeyValueConfig' });
+      }
+    },
+    *publishRecordRollback({ payload }, { call, put }) {
+      const res = yield call(publishRecordRollback, payload);
       if (res.status) {
         yield put({ type: 'getKeyValueConfig' });
       }
@@ -268,6 +297,10 @@ export default {
         window.open(`${apiPrefix}/config/${mode}/${_id}`);
       }
     },
+    recordPreview({ payload }) {
+      const {  mode,  _id } = payload;
+      window.open(`${apiPrefix}/records/preview/${mode}/${_id}`);
+    }
   },
 
   reducers: {

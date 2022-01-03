@@ -166,3 +166,16 @@ export async function rollbackKeyValue(params) {
     body: params,
   });
 }
+
+export async function getKeyValuePublishRecords(params) {
+  return request(`${apiPrefix}/records?${stringify(params)}`, {
+    method: 'GET',
+  });
+}
+
+export async function publishRecordRollback(params) {
+  return request(`${apiPrefix}/records/rollback`, {
+    method: 'POST',
+    body: params,
+  });
+}

@@ -9,6 +9,7 @@ import UploadImage from '@/components/extendedFormField/UploadImage';
 import FormModal from './formModal';
 import KeyValueModal from './keyValueModal';
 import DraftModal from './draftModal';
+import PublishRecordsModal from './publishRecordsModal';
 import TagModal from './tagModal';
 import { getEnv } from '@/utils/utils';
 import schema from './schema.js';
@@ -34,6 +35,7 @@ class KeyValue extends Component {
     this.handlePageChange = this.handlePageChange.bind(this);
     this.showFormModal = this.showFormModal.bind(this);
     this.showKeyValueModal = this.showKeyValueModal.bind(this);
+    this.handleRecord = this.handleRecord.bind(this);
   }
 
   showFormModal() {
@@ -212,6 +214,30 @@ class KeyValue extends Component {
     this.refs.draftModal.handleShow();
   }
 
+  handleRecord(record) {
+    const { keyValueManagement, dispatch } = this.props;
+    const { publishRecordsPagination } = keyValueManagement;
+
+    dispatch({
+      type: 'keyValueManagement/updateData',
+      payload: {
+        publishRecordsPagination: {
+          ...publishRecordsPagination,
+          pageIndex: 1
+        }
+      },
+    });
+
+    dispatch({
+      type: 'keyValueManagement/getKeyValuePublishRecords',
+      payload: {
+        configRef: record._id
+      },
+    });
+
+    this.refs.recordsModal.handleShow();
+  }
+
   handlePublish(record, status) {
     const { dispatch } = this.props;
     confirm({
@@ -354,7 +380,11 @@ class KeyValue extends Component {
               </Menu.Item>
               <Menu.Item key="2" onClick={this.handleDraft.bind(this, record)}>
                 <Icon type="branches" />
-                历史版本
+                历史编辑版本
+              </Menu.Item>
+              <Menu.Item key="3" onClick={this.handleRecord.bind(this, record)}>
+                <Icon type="branches" />
+                历史发布版本
               </Menu.Item>
             </Menu>
           );
@@ -464,6 +494,8 @@ class KeyValue extends Component {
         />
         {/* key-value配置草稿列表 */}
         <DraftModal ref="draftModal" keyValueManagement={keyValueManagement} dispatch={dispatch} />
+        {/* 发布记录配置草稿列表 */}
+        <PublishRecordsModal ref="recordsModal" keyValueManagement={keyValueManagement} dispatch={dispatch} />
         {/* 标记tag表单 */}
         <TagModal ref="tagModal" keyValueManagement={keyValueManagement} dispatch={dispatch} />
       </Card>
