@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Card, Divider, Row, Col, Table, Select, Radio, Modal, Tag, Checkbox, Button } from 'antd';
+import { Table, Modal, Button } from 'antd';
 import styles from '../index.less';
+import 'antd/dist/antd.css';
 
-
-class DraftModal extends Component {
+class PublishRecordsModal extends Component {
   constructor(props) {
     super(props);
     this.handleHide = this.handleHide.bind(this);
@@ -21,21 +21,21 @@ class DraftModal extends Component {
 
   handlePageChange(value) {
     const { keyValueManagement, dispatch } = this.props;
-    const { keyValueDraft, draftPagination } = keyValueManagement;
+    const { publishRecords, publishRecordsPagination } = keyValueManagement;
     dispatch({
       type: 'keyValueManagement/updateData',
       payload: {
-        draftPagination: {
-          ...draftPagination,
+        publishRecordsPagination: {
+          ...publishRecordsPagination,
           pageIndex: value
         }
       },
     });
 
     dispatch({
-      type: 'keyValueManagement/getKeyValueDraft',
+      type: 'keyValueManagement/getKeyValuePublishRecords',
       payload: {
-        configRef: keyValueDraft[0].configId
+        configRef: publishRecords[0].configId
       },
     });
   }
@@ -48,21 +48,19 @@ class DraftModal extends Component {
     });
 
     dispatch({
-      type: 'keyValueManagement/rollbackKeyValue',
+      type: 'keyValueManagement/publishRecordRollback',
       payload: {
         configId: record.configId,
-        draftId: record._id,
+        recordId: record._id,
       },
     });
   }
 
   handlePreview(record, mode) {
-    const { keyValueManagement, dispatch } = this.props;
-    const { envList } = keyValueManagement;
+    const { dispatch } = this.props;
     dispatch({
-      type: 'keyValueManagement/previewKeyValue',
+      type: 'keyValueManagement/recordPreview',
       payload: {
-        cdnUrl: record.cdnUrl,
         mode,
         _id: record._id,
       },
@@ -76,17 +74,16 @@ class DraftModal extends Component {
   }
 
   render() {
-    const self = this;
     const { keyValueManagement } = this.props;
-    const { keyValueDraft, draftPagination } = keyValueManagement;
+    const { publishRecords, publishRecordsPagination } = keyValueManagement;
 
     const columns = [
       {
-        title: '草稿id',
+        title: '发布id',
         dataIndex: '_id',
       },
       {
-        title: '创建时间',
+        title: '发布时间',
         dataIndex: 'lastEditTime',
         render: text => {
           return new Date(text).format('yyyy-MM-dd hh:mm:ss');
@@ -100,7 +97,7 @@ class DraftModal extends Component {
               <Button type="primary" size="small" onClick={this.handleRollback.bind(this, record)}>
                 回滚
               </Button>
-              <Button size="small" style={{ marginLeft: '10px' }} onClick={this.handlePreview.bind(this, record, 'draft')}>
+              <Button size="small" style={{ marginLeft: '10px' }} onClick={this.handlePreview.bind(this, record, 'prod')}>
                 预览
               </Button>
             </div>
@@ -111,7 +108,7 @@ class DraftModal extends Component {
 
     return (
       <Modal
-        title="历史编辑版本"
+        title="历史发布版本"
         className={styles.keyValueModal}
         visible={this.state.visible}
         onOk={this.handleHide}
@@ -119,12 +116,12 @@ class DraftModal extends Component {
       >
         <Table
           columns={columns}
-          dataSource={keyValueDraft}
-          pagination={{ pageSize: draftPagination.pageSize, current: draftPagination.pageIndex, total: draftPagination.total, onChange: this.handlePageChange }}
+          dataSource={publishRecords}
+          pagination={{ pageSize: publishRecordsPagination.pageSize, current: publishRecordsPagination.pageIndex, total: publishRecordsPagination.total, onChange: this.handlePageChange }}
         />
       </Modal>
     );
   }
 }
 
-export default DraftModal;
+export default PublishRecordsModal;
